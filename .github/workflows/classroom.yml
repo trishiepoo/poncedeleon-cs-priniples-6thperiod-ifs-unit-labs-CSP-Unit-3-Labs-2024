@@ -1,0 +1,70 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: labtest2
+      id: labtest2
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: labtest2
+        setup-command: pip install pytest
+        command: pytest tests/test_lab2.py
+        timeout: 10
+        max-score: 20
+    - name: labtest1
+      id: labtest1
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: labtest1
+        setup-command: pip install pytest
+        command: pytest tests/test_lab1.py
+        timeout: 10
+        max-score: 20
+    - name: labtest3
+      id: labtest3
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: labtest3
+        setup-command: pip install pytest
+        command: pytest tests/test_lab3.py
+        timeout: 10
+        max-score: 20
+    - name: labtest4
+      id: labtest4
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: labtest4
+        setup-command: pip install pytest
+        command: pytest tests/test_lab4.py
+        timeout: 10
+        max-score: 20
+    - name: labtest5
+      id: labtest5
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: labtest5
+        setup-command: pip install pytest
+        command: pytest tests/test_lab5.py
+        timeout: 10
+        max-score: 20
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        LABTEST2_RESULTS: "${{steps.labtest2.outputs.result}}"
+        LABTEST1_RESULTS: "${{steps.labtest1.outputs.result}}"
+        LABTEST3_RESULTS: "${{steps.labtest3.outputs.result}}"
+        LABTEST4_RESULTS: "${{steps.labtest4.outputs.result}}"
+        LABTEST5_RESULTS: "${{steps.labtest5.outputs.result}}"
+      with:
+        runners: labtest2,labtest1,labtest3,labtest4,labtest5
